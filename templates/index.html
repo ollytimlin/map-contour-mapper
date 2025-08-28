@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Contour Map - Map Contour Mapper{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary">
+                <i class="fas fa-mountain"></i> Map Contour Mapper
+            </h1>
+            <p class="lead text-muted">Generate beautiful elevation contour maps from any location worldwide</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('generate') }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-map-marked-alt text-primary"></i> Location & Area
+                            </h5>
+                            
+                            <div class="mb-3">
+                                <label for="bbox" class="form-label">
+                                    <i class="fas fa-map-marked-alt"></i> Select Area
+                                </label>
+                                
+                                <!-- Interactive Map -->
+                                <div class="card mb-3">
+                                    <div class="card-body p-2">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <small class="text-muted">
+                                                <i class="fas fa-mouse-pointer"></i> Hold <kbd>Shift</kbd> and drag to select area
+                                            </small>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(7.1, 43.6, 7.4, 43.8)">Nice</button>
+                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(-122.5, 37.7, -122.3, 37.8)">SF</button>
+                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(-3.3, 55.9, -3.1, 56.0)">Edinburgh</button>
+                                                <button type="button" class="btn btn-outline-success" onclick="goToLocation(7.5, 45.9, 8.5, 46.5)">Alps</button>
+                                            </div>
+                                        </div>
+                                        <div id="map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Coordinate Input (sync with map) -->
+                                <input type="text" class="form-control" id="bbox" name="bbox" 
+                                       placeholder="min_lon,min_lat,max_lon,max_lat" 
+                                       value="7.1,43.6,7.4,43.8" required>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Coordinates will update automatically when you draw on the map above<br>
+                                    Or enter manually: <code>min_longitude,min_latitude,max_longitude,max_latitude</code>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-palette text-primary"></i> Appearance
+                            </h5>
+                            
+                            <div class="mb-3">
+                                <label for="interval" class="form-label">Contour Interval (meters)</label>
+                                <input type="number" class="form-control" id="interval" name="interval" 
+                                       value="10" min="1" max="100" step="1" required>
+                                <div class="form-text">Distance between contour lines in meters</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="background_color" class="form-label">Background Color</label>
+                                <div class="input-group">
+                                    <input type="color" class="form-control form-control-color" 
+                                           id="background_color_picker" value="#FFB366" 
+                                           title="Choose background color">
+                                    <input type="text" class="form-control" id="background_color" 
+                                           name="background_color" value="#FFB366" 
+                                           placeholder="#ffffff" pattern="^#[0-9A-Fa-f]{6}$" required>
+                                </div>
+                                <div class="form-text">Hex color code (e.g., #FFB366 for light orange)</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="roads" name="roads">
+                                    <label class="form-check-label" for="roads">
+                                        <i class="fas fa-road"></i> Include Roads
+                                    </label>
+                                    <div class="form-text">Overlay road network on the map</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="card-title mb-3">
+                                <i class="fas fa-expand-arrows-alt text-primary"></i> Output Settings
+                            </h5>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="resolution" class="form-label">Output Size</label>
+                                <select class="form-select" id="resolution" name="resolution">
+                                    <option value="800">Small (800px width)</option>
+                                    <option value="1600" selected>Medium (1600px width)</option>
+                                    <option value="3200">Large (3200px width)</option>
+                                    <option value="4800">Extra Large (4800px width)</option>
+                                </select>
+                                <div class="form-text">
+                                    Height will be automatically calculated to match your selected area's aspect ratio
+                                </div>
+                                <input type="hidden" id="width" name="width" value="1600">
+                                <input type="hidden" id="height" name="height" value="1200">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Calculated Size</label>
+                                <div class="form-control-plaintext" id="calculated-size">
+                                    <small class="text-muted">
+                                        <span id="display-dimensions">1600 × 1200</span><br>
+                                        <span id="display-ratio">Ratio: 4:3</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-map"></i> Generate Contour Map
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-lightbulb text-warning"></i> Quick Start Examples
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>Nice, France</h6>
+                            <code>7.1,43.6,7.4,43.8</code>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>San Francisco, CA</h6>
+                            <code>-122.5,37.7,-122.3,37.8</code>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Edinburgh, UK</h6>
+                            <code>-3.3,55.9,-3.1,56.0</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize the map
+    let map, currentRectangle;
+    
+    function initMap() {
+        // Create map centered on Nice, France
+        map = L.map('map').setView([43.7, 7.25], 10);
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+        
+        // Add draw control for rectangle
+        map.on('mousedown', startDrawing);
+        
+        // Initialize with current bbox
+        updateMapFromInput();
+    }
+    
+    let isDrawing = false;
+    let startLatLng;
+    
+    function startDrawing(e) {
+        if (e.originalEvent.shiftKey) {
+            isDrawing = true;
+            startLatLng = e.latlng;
+            map.dragging.disable();
+            
+            map.on('mousemove', updateDrawing);
+            map.on('mouseup', finishDrawing);
+        }
+    }
+    
+    function updateDrawing(e) {
+        if (!isDrawing) return;
+        
+        // Remove previous rectangle
+        if (currentRectangle) {
+            map.removeLayer(currentRectangle);
+        }
+        
+        // Create new rectangle
+        const bounds = L.latLngBounds(startLatLng, e.latlng);
+        currentRectangle = L.rectangle(bounds, {
+            color: '#007bff',
+            weight: 2,
+            fillOpacity: 0.2
+        }).addTo(map);
+    }
+    
+    function finishDrawing(e) {
+        if (!isDrawing) return;
+        
+        isDrawing = false;
+        map.dragging.enable();
+        map.off('mousemove', updateDrawing);
+        map.off('mouseup', finishDrawing);
+        
+        if (currentRectangle) {
+            const bounds = currentRectangle.getBounds();
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+            
+            // Update input field
+            const bbox = `${sw.lng.toFixed(4)},${sw.lat.toFixed(4)},${ne.lng.toFixed(4)},${ne.lat.toFixed(4)}`;
+            document.getElementById('bbox').value = bbox;
+        }
+    }
+    
+    function updateMapFromInput() {
+        const bboxInput = document.getElementById('bbox').value;
+        if (bboxInput) {
+            const coords = bboxInput.split(',').map(parseFloat);
+            if (coords.length === 4) {
+                const [minLon, minLat, maxLon, maxLat] = coords;
+                
+                // Remove existing rectangle
+                if (currentRectangle) {
+                    map.removeLayer(currentRectangle);
+                }
+                
+                // Add new rectangle
+                const bounds = L.latLngBounds([minLat, minLon], [maxLat, maxLon]);
+                currentRectangle = L.rectangle(bounds, {
+                    color: '#007bff',
+                    weight: 2,
+                    fillOpacity: 0.2
+                }).addTo(map);
+                
+                // Fit map to bounds
+                map.fitBounds(bounds, { padding: [20, 20] });
+                
+                // Update resolution calculation
+                updateResolutionCalculation(minLon, minLat, maxLon, maxLat);
+            }
+        }
+    }
+    
+    function updateResolutionCalculation(minLon, minLat, maxLon, maxLat) {
+        // Calculate aspect ratio of the bounding box
+        const lonDiff = maxLon - minLon;
+        const latDiff = maxLat - minLat;
+        
+        // Approximate aspect ratio (this is simplified, real projection would be more complex)
+        const aspectRatio = lonDiff / latDiff;
+        
+        // Get selected width
+        const selectedWidth = parseInt(document.getElementById('resolution').value);
+        const calculatedHeight = Math.round(selectedWidth / aspectRatio);
+        
+        // Update hidden fields
+        document.getElementById('width').value = selectedWidth;
+        document.getElementById('height').value = calculatedHeight;
+        
+        // Update display
+        document.getElementById('display-dimensions').textContent = `${selectedWidth} × ${calculatedHeight}`;
+        
+        // Calculate and display simplified ratio
+        const gcd = function(a, b) { return b === 0 ? a : gcd(b, a % b); };
+        const ratio = gcd(selectedWidth, calculatedHeight);
+        const ratioW = selectedWidth / ratio;
+        const ratioH = calculatedHeight / ratio;
+        document.getElementById('display-ratio').textContent = `Ratio: ${ratioW}:${ratioH}`;
+    }
+    
+    function goToLocation(minLon, minLat, maxLon, maxLat) {
+        const bbox = `${minLon},${minLat},${maxLon},${maxLat}`;
+        document.getElementById('bbox').value = bbox;
+        updateMapFromInput();
+    }
+    
+    // Sync color picker with text input
+    document.getElementById('background_color_picker').addEventListener('change', function() {
+        document.getElementById('background_color').value = this.value;
+    });
+    
+    document.getElementById('background_color').addEventListener('change', function() {
+        document.getElementById('background_color_picker').value = this.value;
+    });
+    
+    // Update map when input changes
+    document.getElementById('bbox').addEventListener('input', updateMapFromInput);
+    
+    // Update resolution when selection changes
+    document.getElementById('resolution').addEventListener('change', function() {
+        const bboxInput = document.getElementById('bbox').value;
+        if (bboxInput) {
+            const coords = bboxInput.split(',').map(parseFloat);
+            if (coords.length === 4) {
+                updateResolutionCalculation(coords[0], coords[1], coords[2], coords[3]);
+            }
+        }
+    });
+    
+    // Initialize map when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initMap();
+    });
+</script>
+{% endblock %}

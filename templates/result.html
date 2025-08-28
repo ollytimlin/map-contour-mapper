@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Map Generated - Map Contour Mapper{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold text-success">
+                <i class="fas fa-check-circle"></i> Map Generated Successfully!
+            </h1>
+            <p class="lead text-muted">Your contour map has been created and is ready for download</p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-image text-primary"></i> Generated Map Preview
+                </h5>
+                <img src="{{ url_for('static', filename='generated_maps/' + filename) }}" 
+                     class="img-fluid rounded shadow" 
+                     alt="Generated contour map"
+                     style="max-height: 600px; object-fit: contain;">
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('download', filename=filename) }}" 
+                       class="btn btn-success btn-lg me-2">
+                        <i class="fas fa-download"></i> Download Map
+                    </a>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-plus"></i> Generate Another
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-info-circle text-info"></i> Map Details
+                        </h5>
+                        <dl class="row">
+                            <dt class="col-sm-5">Bounding Box:</dt>
+                            <dd class="col-sm-7"><code>{{ bbox }}</code></dd>
+                            
+                            <dt class="col-sm-5">Contour Interval:</dt>
+                            <dd class="col-sm-7">{{ interval }}m</dd>
+                            
+                            <dt class="col-sm-5">Background Color:</dt>
+                            <dd class="col-sm-7">
+                                <span class="badge" style="background-color: {{ background_color }}; color: {% if background_color in ['#000000', '#000'] %}white{% else %}black{% endif %};">
+                                    {{ background_color }}
+                                </span>
+                            </dd>
+                            
+                            <dt class="col-sm-5">Roads Included:</dt>
+                            <dd class="col-sm-7">
+                                {% if roads %}
+                                    <span class="badge bg-success">Yes</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No</span>
+                                {% endif %}
+                            </dd>
+                            
+                            <dt class="col-sm-5">Resolution:</dt>
+                            <dd class="col-sm-7">{{ width }} × {{ height }} pixels</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-share-alt text-warning"></i> Share & Use
+                        </h5>
+                        <p class="card-text">You can use this map for:</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success"></i> Hiking and outdoor activities</li>
+                            <li><i class="fas fa-check text-success"></i> Educational purposes</li>
+                            <li><i class="fas fa-check text-success"></i> Geographic analysis</li>
+                            <li><i class="fas fa-check text-success"></i> Wall art and decoration</li>
+                            <li><i class="fas fa-check text-success"></i> Presentations and reports</li>
+                        </ul>
+                        
+                        <div class="mt-3">
+                            <a href="{{ url_for('gallery') }}" class="btn btn-outline-info">
+                                <i class="fas fa-images"></i> View Gallery
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-magic text-purple"></i> Customize Further
+                    </h5>
+                    <p class="card-text">Want to try different settings? Here are some suggestions:</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card border-primary">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Try Different Colors</h6>
+                                    <p class="card-text small">Experiment with different background colors like pastels or earth tones</p>
+                                    <form method="POST" action="{{ url_for('generate') }}" class="d-inline">
+                                        <input type="hidden" name="bbox" value="{{ bbox }}">
+                                        <input type="hidden" name="interval" value="{{ interval }}">
+                                        <input type="hidden" name="background_color" value="#E6E6FA">
+                                        {% if roads %}<input type="hidden" name="roads" value="on">{% endif %}
+                                        <input type="hidden" name="width" value="{{ width }}">
+                                        <input type="hidden" name="height" value="{{ height }}">
+
+                                        <button type="submit" class="btn btn-sm btn-primary">Lavender</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-success">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Higher Resolution</h6>
+                                    <p class="card-text small">Generate a larger version for printing or detailed viewing</p>
+                                    <form method="POST" action="{{ url_for('generate') }}" class="d-inline">
+                                        <input type="hidden" name="bbox" value="{{ bbox }}">
+                                        <input type="hidden" name="interval" value="{{ interval }}">
+                                        <input type="hidden" name="background_color" value="{{ background_color }}">
+                                        {% if roads %}<input type="hidden" name="roads" value="on">{% endif %}
+                                        <input type="hidden" name="width" value="4800">
+                                        <input type="hidden" name="height" value="3600">
+
+                                        <button type="submit" class="btn btn-sm btn-success">4K Version</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Different Detail</h6>
+                                    <p class="card-text small">Try finer contour intervals for more detailed elevation lines</p>
+                                    <form method="POST" action="{{ url_for('generate') }}" class="d-inline">
+                                        <input type="hidden" name="bbox" value="{{ bbox }}">
+                                        <input type="hidden" name="interval" value="5">
+                                        <input type="hidden" name="background_color" value="{{ background_color }}">
+                                        {% if roads %}<input type="hidden" name="roads" value="on">{% endif %}
+                                        <input type="hidden" name="width" value="{{ width }}">
+                                        <input type="hidden" name="height" value="{{ height }}">
+
+                                        <button type="submit" class="btn btn-sm btn-warning">5m Contours</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

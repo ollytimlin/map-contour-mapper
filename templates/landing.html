@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Map Contour Mapper - Beautiful Elevation Maps{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- Hero Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-3 fw-bold text-primary mb-4">
+                <i class="fas fa-mountain"></i> Map Contour Mapper
+            </h1>
+            <p class="lead text-muted fs-4 mb-4">
+                Create stunning elevation contour maps from anywhere in the world
+            </p>
+            <div class="d-flex justify-content-center gap-3 mb-5">
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-user-plus"></i> Start Free Trial
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="fas fa-sign-in-alt"></i> Log In
+                </a>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="row mb-5">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-map-marked-alt fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Interactive Map Selection</h5>
+                        <p class="card-text">Draw directly on the map to select your area. No more guessing coordinates!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-palette fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Customizable Design</h5>
+                        <p class="card-text">Choose colors, contour intervals, add roads, and select perfect resolutions up to 4K.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-download fa-3x text-warning"></i>
+                        </div>
+                        <h5 class="card-title">High Quality Output</h5>
+                        <p class="card-text">Download print-ready PNG files perfect for framing, presentations, or digital use.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Maps Gallery -->
+        <div class="text-center mb-5">
+            <h2 class="mb-4">Beautiful Maps Created by Our Users</h2>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='generated_maps/nice_contour_map.png') }}" 
+                             class="card-img-top" alt="Nice, France" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h6 class="card-title">Nice, France</h6>
+                            <small class="text-muted">Mediterranean coastline with 6m contours</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-mountain fa-3x text-muted"></i>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">San Francisco Bay</h6>
+                            <small class="text-muted">Urban hills with road overlays</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="fas fa-map fa-3x text-muted"></i>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">Swiss Alps</h6>
+                            <small class="text-muted">High-detail mountain contours</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Preview -->
+        <div class="card mb-5">
+            <div class="card-body text-center">
+                <h3 class="card-title mb-4">Simple Credit-Based Pricing</h3>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="border rounded p-3 h-100">
+                            <h5 class="text-success">Free Trial</h5>
+                            <h2 class="text-primary">3</h2>
+                            <p class="text-muted">free credits to start</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="border rounded p-3 h-100">
+                            <h5>Starter Pack</h5>
+                            <h2 class="text-primary">5 credits</h2>
+                            <p class="text-muted">$4.99</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="border rounded p-3 h-100 border-primary">
+                            <h5 class="text-primary">Popular</h5>
+                            <h2 class="text-primary">15 credits</h2>
+                            <p class="text-muted">$12.99</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="border rounded p-3 h-100">
+                            <h5>Pro Pack</h5>
+                            <h2 class="text-primary">50 credits</h2>
+                            <p class="text-muted">$39.99</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted mt-3">1 credit = 1 map generation • No subscription • Credits never expire</p>
+                <a href="{{ url_for('pricing') }}" class="btn btn-outline-primary">View Full Pricing</a>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="text-center mb-4">Perfect For</h3>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-hiking text-primary fa-2x me-3 mt-1"></i>
+                            <div>
+                                <h5>Outdoor Enthusiasts</h5>
+                                <p class="text-muted">Plan hiking routes, understand terrain, and create custom trail maps</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-graduation-cap text-success fa-2x me-3 mt-1"></i>
+                            <div>
+                                <h5>Educators & Students</h5>
+                                <p class="text-muted">Teaching geography, geology, or environmental science</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-home text-warning fa-2x me-3 mt-1"></i>
+                            <div>
+                                <h5>Home Decoration</h5>
+                                <p class="text-muted">Beautiful wall art of your hometown, vacation spot, or dream destination</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-chart-line text-info fa-2x me-3 mt-1"></i>
+                            <div>
+                                <h5>Professionals</h5>
+                                <p class="text-muted">Urban planners, researchers, and consultants</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center">
+            <div class="card bg-primary text-white">
+                <div class="card-body py-5">
+                    <h2 class="card-title">Ready to Create Beautiful Maps?</h2>
+                    <p class="card-text fs-5 mb-4">Start with 3 free credits - no payment required</p>
+                    <a href="{{ url_for('register') }}" class="btn btn-light btn-lg px-5">
+                        <i class="fas fa-rocket"></i> Get Started Free
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

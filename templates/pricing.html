@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Pricing - Map Contour Mapper{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary">
+                <i class="fas fa-coins"></i> Simple Credit-Based Pricing
+            </h1>
+            <p class="lead text-muted">Pay only for what you use • No subscription • Credits never expire</p>
+        </div>
+
+        <div class="row">
+            {% for credits, info in credit_prices.items() %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 {% if credits == 15 %}border-primary{% endif %}">
+                        {% if credits == 15 %}
+                            <div class="card-header bg-primary text-white text-center">
+                                <i class="fas fa-star"></i> Most Popular
+                            </div>
+                        {% endif %}
+                        <div class="card-body text-center d-flex flex-column">
+                            <h3 class="card-title text-primary">{{ credits }} Credits</h3>
+                            <h2 class="text-dark mb-3">${{ "%.2f"|format(info.price / 100) }}</h2>
+                            <p class="text-muted mb-3">${{ "%.2f"|format((info.price / 100) / credits) }} per map</p>
+                            
+                            <ul class="list-unstyled mb-4 flex-grow-1">
+                                <li><i class="fas fa-check text-success"></i> {{ credits }} map generations</li>
+                                <li><i class="fas fa-check text-success"></i> All features included</li>
+                                <li><i class="fas fa-check text-success"></i> Up to 4K resolution</li>
+                                <li><i class="fas fa-check text-success"></i> Credits never expire</li>
+                                {% if credits >= 50 %}
+                                    <li><i class="fas fa-check text-success"></i> <strong>Best value!</strong></li>
+                                {% endif %}
+                            </ul>
+                            
+                            <div class="mt-auto">
+                                {% if current_user.is_authenticated %}
+                                    <a href="{{ url_for('purchase_credits') }}" class="btn btn-primary btn-lg w-100">
+                                        <i class="fas fa-shopping-cart"></i> Purchase
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg w-100">
+                                        <i class="fas fa-user-plus"></i> Sign Up to Buy
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Features Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">What's Included</h2>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <i class="fas fa-map-marked-alt fa-3x text-primary mb-3"></i>
+                            <h5>Interactive Map Selection</h5>
+                            <p class="text-muted">Draw directly on the map to select your area with pixel-perfect precision</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <i class="fas fa-palette fa-3x text-success mb-3"></i>
+                            <h5>Full Customization</h5>
+                            <p class="text-muted">Choose colors, contour intervals, add roads, and set custom resolutions</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <i class="fas fa-download fa-3x text-warning mb-3"></i>
+                            <h5>High-Quality Downloads</h5>
+                            <p class="text-muted">Download print-ready PNG files up to 4800×3600 pixels (4K quality)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+                
+                <div class="accordion" id="pricingFAQ">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                How do credits work?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Each map generation costs 1 credit. Credits are deducted when you successfully generate a map. If generation fails due to an error, your credit is refunded automatically.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Do credits expire?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                No! Your credits never expire. Buy them once and use them whenever you want, even years later.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Can I get a refund?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                We offer a 30-day money-back guarantee. If you're not satisfied with your purchase, contact us for a full refund of unused credits.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                What payment methods do you accept?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                We accept all major credit cards, debit cards, and digital wallets through Stripe's secure payment processing.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                Is there a bulk discount?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                            <div class="accordion-body">
+                                Yes! The more credits you buy, the lower the per-map cost. Our 100-credit package offers the best value at $0.70 per map.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-5">
+            {% if not current_user.is_authenticated %}
+                <div class="card bg-light">
+                    <div class="card-body py-5">
+                        <h3>Ready to get started?</h3>
+                        <p class="lead">Sign up now and get 3 free credits to try our service</p>
+                        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-rocket"></i> Start Free Trial
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

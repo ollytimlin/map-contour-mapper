@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Map Contour Mapper{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold text-primary">
+                <i class="fas fa-user-plus"></i> Create Account
+            </h1>
+            <p class="lead text-muted">Start with 3 free credits</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Minimum 6 characters</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        {{ form.confirm_password.label(class="form-label") }}
+                        {{ form.confirm_password(class="form-control" + (" is-invalid" if form.confirm_password.errors else "")) }}
+                        {% if form.confirm_password.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.confirm_password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-rocket"></i> Create Account & Get 3 Free Credits
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <p class="text-muted">
+                Already have an account? 
+                <a href="{{ url_for('login') }}" class="text-decoration-none">Log in here</a>
+            </p>
+        </div>
+
+        <!-- Benefits -->
+        <div class="card mt-4 border-success">
+            <div class="card-body">
+                <h6 class="card-title text-success">
+                    <i class="fas fa-gift"></i> What you get for free:
+                </h6>
+                <ul class="list-unstyled mb-0">
+                    <li><i class="fas fa-check text-success"></i> 3 free map generations</li>
+                    <li><i class="fas fa-check text-success"></i> Access to all features</li>
+                    <li><i class="fas fa-check text-success"></i> High-resolution downloads</li>
+                    <li><i class="fas fa-check text-success"></i> No subscription required</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

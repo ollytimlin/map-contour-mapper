@@ -1,0 +1,10 @@
+[project]
+name = "map-contour-mapper"
+version = "0.1.0"
+description = "Generate simplified contour maps with optional roads overlay"
+authors = [{name = "", email = ""}]
+readme = "README.md"
+requires-python = ">=3.9"
+
+[project.scripts]
+map-contour-mapper = "map_contour_mapper.__main__:main"

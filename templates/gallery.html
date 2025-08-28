@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Gallery - Map Contour Mapper{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary">
+                <i class="fas fa-images"></i> Map Gallery
+            </h1>
+            <p class="lead text-muted">Browse all generated contour maps</p>
+        </div>
+
+        {% if files %}
+            <div class="row">
+                {% for file in files %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="position-relative">
+                                <img src="{{ url_for('static', filename='generated_maps/' + file.filename) }}" 
+                                     class="card-img-top" 
+                                     alt="Contour map"
+                                     style="height: 250px; object-fit: cover; cursor: pointer;"
+                                     data-bs-toggle="modal" 
+                                     data-bs-target="#imageModal{{ loop.index }}">
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-dark bg-opacity-75">{{ file.size }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title">
+                                    <i class="fas fa-map"></i> 
+                                    Map #{{ loop.index }}
+                                </h6>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i> {{ file.created }}
+                                    </small>
+                                </p>
+                                <div class="mt-auto">
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ url_for('download', filename=file.filename) }}" 
+                                           class="btn btn-primary btn-sm">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                        <button class="btn btn-outline-secondary btn-sm" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#imageModal{{ loop.index }}">
+                                            <i class="fas fa-eye"></i> View Full Size
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal for full-size image -->
+                    <div class="modal fade" id="imageModal{{ loop.index }}" tabindex="-1">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-map"></i> Contour Map - {{ file.created }}
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img src="{{ url_for('static', filename='generated_maps/' + file.filename) }}" 
+                                         class="img-fluid rounded" 
+                                         alt="Full size contour map">
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="me-auto">
+                                        <small class="text-muted">
+                                            <i class="fas fa-file"></i> {{ file.filename }} 
+                                            <span class="badge bg-secondary ms-1">{{ file.size }}</span>
+                                        </small>
+                                    </div>
+                                    <a href="{{ url_for('download', filename=file.filename) }}" 
+                                       class="btn btn-success">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-info-circle text-info"></i> Gallery Statistics
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <h3 class="text-primary">{{ files|length }}</h3>
+                                        <p class="text-muted">Total Maps</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <h3 class="text-success">
+                                            {{ "%.1f"|format((files|sum(attribute='size')|replace(' MB', '')|float)) }} MB
+                                        </h3>
+                                        <p class="text-muted">Total Size</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <h3 class="text-warning">{{ files[0].created.split(' ')[0] if files else 'N/A' }}</h3>
+                                        <p class="text-muted">Latest Map</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-images text-muted" style="font-size: 4rem;"></i>
+                        <h4 class="card-title mt-3">No Maps Generated Yet</h4>
+                        <p class="card-text">Start by creating your first contour map!</p>
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Generate Your First Map
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-success btn-lg">
+                <i class="fas fa-plus"></i> Create New Map
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
