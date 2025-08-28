@@ -68,18 +68,13 @@
                                             <small class="text-muted">
                                                 <i class="fas fa-mouse-pointer"></i> 
                                                 <span class="d-none d-md-inline">Hold <kbd>Shift</kbd> and drag to select area</span>
-                                                <span class="d-md-none">Tap "Draw Mode" then drag to select area</span>
+                                                <span class="d-md-none">Tap "Draw Mode" then tap two corners to select area</span>
                                             </small>
                                             <div class="btn-group btn-group-sm" role="group">
                                                 <!-- Mobile draw mode toggle -->
                                                 <button type="button" class="btn btn-outline-success d-md-none" id="drawModeBtn" onclick="toggleDrawMode()">
                                                     <i class="fas fa-draw-polygon"></i> Draw Mode
                                                 </button>
-                                                <!-- Location shortcuts -->
-                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(7.1, 43.6, 7.4, 43.8)">Nice</button>
-                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(-122.5, 37.7, -122.3, 37.8)">SF</button>
-                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(-3.3, 55.9, -3.1, 56.0)">Edinburgh</button>
-                                                <button type="button" class="btn btn-outline-success" onclick="goToLocation(7.5, 45.9, 8.5, 46.5)">Alps</button>
                                             </div>
                                         </div>
                                         <div id="map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
@@ -239,9 +234,11 @@
             maxZoom: 18
         }).addTo(map);
         
-        // Add draw control for rectangle (desktop and mobile)
+        // Add draw control for rectangle (desktop only for now - mobile uses button)
         map.on('mousedown', startDrawing);
-        map.on('touchstart', startDrawing);
+        
+        // For mobile, we'll use a simpler click-based approach
+        map.on('click', handleMapClick);
         
         // Initialize with current bbox
         updateMapFromInput();
@@ -249,6 +246,7 @@
     
     let isDrawing = false;
     let startLatLng;
+    let mobileCorner1 = null; // First corner for mobile selection
     
     // Toggle mobile draw mode
     function toggleDrawMode() {
@@ -258,29 +256,97 @@
         if (isMobileDrawMode) {
             btn.innerHTML = '<i class="fas fa-times"></i> Exit Draw';
             btn.className = 'btn btn-danger d-md-none';
+            mobileCorner1 = null; // Reset corners
         } else {
             btn.innerHTML = '<i class="fas fa-draw-polygon"></i> Draw Mode';
             btn.className = 'btn btn-outline-success d-md-none';
+            mobileCorner1 = null; // Reset corners
+        }
+    }
+    
+    // Simple click-based selection for mobile
+    function handleMapClick(e) {
+        if (!isMobileDrawMode) return;
+        
+        if (!mobileCorner1) {
+            // First click - set first corner
+            mobileCorner1 = e.latlng;
+            
+            // Add a temporary marker
+            if (window.tempMarker1) map.removeLayer(window.tempMarker1);
+            window.tempMarker1 = L.marker(mobileCorner1).addTo(map);
+            
+            // Update button text
+            const btn = document.getElementById('drawModeBtn');
+            btn.innerHTML = '<i class="fas fa-map-marker"></i> Tap 2nd Corner';
+            
+        } else {
+            // Second click - create rectangle
+            const corner2 = e.latlng;
+            
+            // Remove temporary marker
+            if (window.tempMarker1) map.removeLayer(window.tempMarker1);
+            
+            // Create rectangle
+            if (currentRectangle) map.removeLayer(currentRectangle);
+            const bounds = L.latLngBounds(mobileCorner1, corner2);
+            currentRectangle = L.rectangle(bounds, {
+                color: '#007bff',
+                weight: 2,
+                fillOpacity: 0.2
+            }).addTo(map);
+            
+            // Update bbox input
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+            const bbox = `${sw.lng.toFixed(4)},${sw.lat.toFixed(4)},${ne.lng.toFixed(4)},${ne.lat.toFixed(4)}`;
+            document.getElementById('bbox').value = bbox;
+            
+            // Update resolution calculation
+            updateResolutionCalculation();
+            
+            // Exit draw mode
+            toggleDrawMode();
         }
     }
     
     function startDrawing(e) {
         // Desktop: require Shift key, Mobile: require draw mode to be enabled
         const isDesktop = e.originalEvent && e.originalEvent.shiftKey;
-        const isMobile = isMobileDrawMode && (e.originalEvent.touches || e.type === 'touchstart');
+        const isMobile = isMobileDrawMode;
         
         if (isDesktop || isMobile) {
             isDrawing = true;
             startLatLng = e.latlng;
             map.dragging.disable();
             
+            // Add event listeners for both mouse and touch
             map.on('mousemove', updateDrawing);
             map.on('mouseup', finishDrawing);
-            map.on('touchmove', updateDrawing);
-            map.on('touchend', finishDrawing);
+            map.on('touchmove', handleTouchMove);
+            map.on('touchend', handleTouchEnd);
             
-            e.preventDefault(); // Prevent default touch behavior
+            if (e.originalEvent && e.originalEvent.preventDefault) {
+                e.originalEvent.preventDefault(); // Prevent default touch behavior
+            }
         }
+    }
+    
+    function handleTouchMove(e) {
+        if (!isDrawing) return;
+        // Convert touch to mouse-like event
+        if (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches.length > 0) {
+            const touch = e.originalEvent.touches[0];
+            const fakeEvent = {
+                latlng: map.containerPointToLatLng([touch.clientX - map.getContainer().offsetLeft, touch.clientY - map.getContainer().offsetTop])
+            };
+            updateDrawing(fakeEvent);
+        }
+    }
+    
+    function handleTouchEnd(e) {
+        if (!isDrawing) return;
+        finishDrawing(e);
     }
     
     function updateDrawing(e) {
@@ -307,8 +373,8 @@
         map.dragging.enable();
         map.off('mousemove', updateDrawing);
         map.off('mouseup', finishDrawing);
-        map.off('touchmove', updateDrawing);
-        map.off('touchend', finishDrawing);
+        map.off('touchmove', handleTouchMove);
+        map.off('touchend', handleTouchEnd);
         
         if (currentRectangle) {
             const bounds = currentRectangle.getBounds();

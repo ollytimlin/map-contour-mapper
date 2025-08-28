@@ -32,13 +32,13 @@
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <small class="text-muted">
                                                 <i class="fas fa-mouse-pointer"></i> <span class="d-none d-md-inline">Hold <kbd>Shift</kbd> and drag to select area</span>
-                                                <span class="d-md-none">Tap "Draw Mode" then drag to select area</span>
+                                                <span class="d-md-none">Tap "Draw Mode" then tap two corners to select area</span>
                                             </small>
                                             <div class="btn-group btn-group-sm" role="group">
-                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(7.1, 43.6, 7.4, 43.8)">Nice</button>
-                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(-122.5, 37.7, -122.3, 37.8)">SF</button>
-                                                <button type="button" class="btn btn-outline-primary" onclick="goToLocation(-3.3, 55.9, -3.1, 56.0)">Edinburgh</button>
-                                                <button type="button" class="btn btn-outline-success" onclick="goToLocation(7.5, 45.9, 8.5, 46.5)">Alps</button>
+                                                <!-- Mobile draw mode toggle -->
+                                                <button type="button" class="btn btn-outline-success d-md-none" id="drawModeBtn" onclick="toggleDrawMode()">
+                                                    <i class="fas fa-draw-polygon"></i> Draw Mode
+                                                </button>
                                             </div>
                                         </div>
                                         <div id="map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
