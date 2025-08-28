@@ -64,39 +64,28 @@
         <div class="text-center mb-5">
             <h2 class="mb-4">Beautiful Maps Created by Our Users</h2>
             <div class="row">
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <img src="{{ url_for('static', filename='generated_maps/nice_contour_map.png') }}" 
-                             class="card-img-top" alt="Nice, France" style="height: 200px; object-fit: cover;">
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <img src="/static/examples/coastal_map.jpg" 
+                             class="card-img-top" alt="Coastal Region" style="height: 300px; object-fit: cover;">
                         <div class="card-body">
-                            <h6 class="card-title">Nice, France</h6>
-                            <small class="text-muted">Mediterranean coastline with 6m contours</small>
+                            <h6 class="card-title">Mediterranean Coastline</h6>
+                            <small class="text-muted">Detailed coastal contours with road networks • 6m intervals</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <i class="fas fa-mountain fa-3x text-muted"></i>
-                        </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <img src="/static/examples/terrain_map.jpg" 
+                             class="card-img-top" alt="Terrain Region" style="height: 300px; object-fit: cover;">
                         <div class="card-body">
-                            <h6 class="card-title">San Francisco Bay</h6>
-                            <small class="text-muted">Urban hills with road overlays</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <i class="fas fa-map fa-3x text-muted"></i>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title">Swiss Alps</h6>
-                            <small class="text-muted">High-detail mountain contours</small>
+                            <h6 class="card-title">Rolling Hills & Valleys</h6>
+                            <small class="text-muted">Complex terrain patterns • 10m contour intervals</small>
                         </div>
                     </div>
                 </div>
             </div>
+            <p class="text-muted">Upload your own example maps to <code>/static/examples/</code> folder</p>
         </div>
 
         <!-- Pricing Preview -->
@@ -115,21 +104,21 @@
                         <div class="border rounded p-3 h-100">
                             <h5>Starter Pack</h5>
                             <h2 class="text-primary">5 credits</h2>
-                            <p class="text-muted">$4.99</p>
+                            <p class="text-muted">$10.00</p>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="border rounded p-3 h-100 border-primary">
                             <h5 class="text-primary">Popular</h5>
                             <h2 class="text-primary">15 credits</h2>
-                            <p class="text-muted">$12.99</p>
+                            <p class="text-muted">$30.00</p>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="border rounded p-3 h-100">
                             <h5>Pro Pack</h5>
                             <h2 class="text-primary">50 credits</h2>
-                            <p class="text-muted">$39.99</p>
+                            <p class="text-muted">$100.00</p>
                         </div>
                     </div>
                 </div>

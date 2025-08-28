@@ -440,8 +440,12 @@
             return;
         }
         
-        // Approximate aspect ratio (this is simplified, real projection would be more complex)
-        const aspectRatio = lonDiff / latDiff;
+        // Calculate proper aspect ratio accounting for latitude
+        // Use Mercator projection approximation for better accuracy
+        const avgLat = (minLat + maxLat) / 2;
+        const latCorrectionFactor = Math.cos(avgLat * Math.PI / 180);
+        const correctedLonDiff = lonDiff * latCorrectionFactor;
+        const aspectRatio = correctedLonDiff / latDiff;
         
         // Get selected width and validate
         const selectedWidth = parseInt(document.getElementById('resolution').value) || 1600;
