@@ -303,7 +303,7 @@
             document.getElementById('bbox').value = bbox;
             
             // Update resolution calculation
-            updateResolutionCalculation();
+            updateResolutionCalculation(sw.lng, sw.lat, ne.lng, ne.lat);
             
             // Exit draw mode
             toggleDrawMode();
@@ -386,7 +386,7 @@
             document.getElementById('bbox').value = bbox;
             
             // Update resolution calculation
-            updateResolutionCalculation();
+            updateResolutionCalculation(sw.lng, sw.lat, ne.lng, ne.lat);
             
             // Exit mobile draw mode after drawing
             if (isMobileDrawMode) {
@@ -429,12 +429,31 @@
         const lonDiff = maxLon - minLon;
         const latDiff = maxLat - minLat;
         
+        // Validate differences to avoid NaN
+        if (!lonDiff || !latDiff || lonDiff <= 0 || latDiff <= 0) {
+            // Use default square ratio if invalid coordinates
+            const selectedWidth = parseInt(document.getElementById('resolution').value) || 1600;
+            document.getElementById('width').value = selectedWidth;
+            document.getElementById('height').value = selectedWidth; // Square aspect
+            document.getElementById('display-dimensions').textContent = `${selectedWidth} × ${selectedWidth}`;
+            document.getElementById('display-ratio').textContent = `Ratio: 1:1`;
+            return;
+        }
+        
         // Approximate aspect ratio (this is simplified, real projection would be more complex)
         const aspectRatio = lonDiff / latDiff;
         
-        // Get selected width
-        const selectedWidth = parseInt(document.getElementById('resolution').value);
-        const calculatedHeight = Math.round(selectedWidth / aspectRatio);
+        // Get selected width and validate
+        const selectedWidth = parseInt(document.getElementById('resolution').value) || 1600;
+        let calculatedHeight = Math.round(selectedWidth / aspectRatio);
+        
+        // Validate calculated height and ensure it's reasonable
+        if (!calculatedHeight || calculatedHeight <= 0 || !isFinite(calculatedHeight)) {
+            calculatedHeight = selectedWidth; // Fallback to square
+        }
+        
+        // Ensure height is within reasonable bounds
+        calculatedHeight = Math.max(100, Math.min(calculatedHeight, 10000));
         
         // Update hidden fields
         document.getElementById('width').value = selectedWidth;
@@ -444,11 +463,20 @@
         document.getElementById('display-dimensions').textContent = `${selectedWidth} × ${calculatedHeight}`;
         
         // Calculate and display simplified ratio
-        const gcd = function(a, b) { return b === 0 ? a : gcd(b, a % b); };
-        const ratio = gcd(selectedWidth, calculatedHeight);
-        const ratioW = selectedWidth / ratio;
-        const ratioH = calculatedHeight / ratio;
-        document.getElementById('display-ratio').textContent = `Ratio: ${ratioW}:${ratioH}`;
+        try {
+            const gcd = function(a, b) { return b === 0 ? a : gcd(b, a % b); };
+            const ratio = gcd(selectedWidth, calculatedHeight);
+            const ratioW = Math.round(selectedWidth / ratio);
+            const ratioH = Math.round(calculatedHeight / ratio);
+            
+            if (isFinite(ratioW) && isFinite(ratioH) && ratioW > 0 && ratioH > 0) {
+                document.getElementById('display-ratio').textContent = `Ratio: ${ratioW}:${ratioH}`;
+            } else {
+                document.getElementById('display-ratio').textContent = `Ratio: 1:1`;
+            }
+        } catch (e) {
+            document.getElementById('display-ratio').textContent = `Ratio: 1:1`;
+        }
     }
     
     function goToLocation(minLon, minLat, maxLon, maxLat) {

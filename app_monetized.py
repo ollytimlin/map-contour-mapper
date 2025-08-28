@@ -437,8 +437,19 @@ def generate():
         interval = float(request.form.get('interval', 10))
         background_color = request.form.get('background_color', '#ffffff').strip()
         include_roads = 'roads' in request.form
-        width = int(request.form.get('width', 1600))
-        height = int(request.form.get('height', 1200))
+        
+        # Safely parse width and height with validation
+        try:
+            width_str = request.form.get('width', '1600')
+            width = int(float(width_str)) if width_str and width_str != 'NaN' else 1600
+        except (ValueError, TypeError):
+            width = 1600
+            
+        try:
+            height_str = request.form.get('height', '1200')  
+            height = int(float(height_str)) if height_str and height_str != 'NaN' else 1200
+        except (ValueError, TypeError):
+            height = 1200
         
         # Validate inputs
         if not bbox_str:
