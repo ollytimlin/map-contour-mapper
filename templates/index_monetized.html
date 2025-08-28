@@ -268,13 +268,27 @@
     function handleMapClick(e) {
         if (!isMobileDrawMode) return;
         
+        // Prevent event bubbling to avoid conflicts
+        if (e.originalEvent) {
+            e.originalEvent.preventDefault();
+            e.originalEvent.stopPropagation();
+            e.originalEvent.stopImmediatePropagation();
+        }
+        
         if (!mobileCorner1) {
             // First click - set first corner
             mobileCorner1 = e.latlng;
             
             // Add a temporary marker
             if (window.tempMarker1) map.removeLayer(window.tempMarker1);
-            window.tempMarker1 = L.marker(mobileCorner1).addTo(map);
+            window.tempMarker1 = L.marker(mobileCorner1, {
+                icon: L.divIcon({
+                    className: 'custom-marker',
+                    html: '<div style="background: red; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>',
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
+                })
+            }).addTo(map);
             
             // Update button text
             const btn = document.getElementById('drawModeBtn');
@@ -308,6 +322,9 @@
             // Exit draw mode
             toggleDrawMode();
         }
+        
+        // Return false to stop all event propagation
+        return false;
     }
     
     function startDrawing(e) {
