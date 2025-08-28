@@ -237,8 +237,18 @@
         // Add draw control for rectangle (desktop only for now - mobile uses button)
         map.on('mousedown', startDrawing);
         
-        // For mobile, we'll use a simpler click-based approach
+        // For mobile, we'll use both click and touch events
         map.on('click', handleMapClick);
+        map.on('touchend', handleMapTouch);
+        
+        // Prevent double-tap zoom on mobile when in draw mode
+        map.on('dblclick', function(e) {
+            if (isMobileDrawMode) {
+                e.originalEvent.preventDefault();
+                e.originalEvent.stopPropagation();
+                return false;
+            }
+        });
         
         // Initialize with current bbox
         updateMapFromInput();
@@ -253,19 +263,36 @@
         isMobileDrawMode = !isMobileDrawMode;
         const btn = document.getElementById('drawModeBtn');
         
+        console.log('Draw mode toggled:', isMobileDrawMode); // Debug log
+        
         if (isMobileDrawMode) {
             btn.innerHTML = '<i class="fas fa-times"></i> Exit Draw';
             btn.className = 'btn btn-danger d-md-none';
             mobileCorner1 = null; // Reset corners
+            
+            // Disable map dragging to prevent conflicts
+            map.dragging.disable();
+            
         } else {
             btn.innerHTML = '<i class="fas fa-draw-polygon"></i> Draw Mode';
             btn.className = 'btn btn-outline-success d-md-none';
             mobileCorner1 = null; // Reset corners
+            
+            // Re-enable map dragging
+            map.dragging.enable();
+            
+            // Clean up any temporary markers
+            if (window.tempMarker1) {
+                map.removeLayer(window.tempMarker1);
+                window.tempMarker1 = null;
+            }
         }
     }
     
     // Simple click-based selection for mobile
     function handleMapClick(e) {
+        console.log('Map clicked, draw mode:', isMobileDrawMode); // Debug log
+        
         if (!isMobileDrawMode) return;
         
         // Prevent event bubbling to avoid conflicts
@@ -274,6 +301,8 @@
             e.originalEvent.stopPropagation();
             e.originalEvent.stopImmediatePropagation();
         }
+        
+        console.log('Processing draw mode click, corner1:', mobileCorner1); // Debug log
         
         if (!mobileCorner1) {
             // First click - set first corner
@@ -324,6 +353,33 @@
         }
         
         // Return false to stop all event propagation
+        return false;
+    }
+    
+    // Handle touch events specifically for mobile
+    function handleMapTouch(e) {
+        console.log('Touch event, draw mode:', isMobileDrawMode); // Debug log
+        
+        if (!isMobileDrawMode) return;
+        
+        // Convert touch to click-like event
+        if (e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches.length > 0) {
+            const touch = e.originalEvent.changedTouches[0];
+            const latlng = map.containerPointToLatLng([
+                touch.clientX - map.getContainer().getBoundingClientRect().left,
+                touch.clientY - map.getContainer().getBoundingClientRect().top
+            ]);
+            
+            // Create a fake event object
+            const fakeEvent = {
+                latlng: latlng,
+                originalEvent: e.originalEvent
+            };
+            
+            // Process the touch as a click
+            handleMapClick(fakeEvent);
+        }
+        
         return false;
     }
     
