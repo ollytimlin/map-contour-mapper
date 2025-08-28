@@ -66,18 +66,36 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
-                        <img src="https://via.placeholder.com/400x300/FFB366/000000?text=Mediterranean+Coastline" 
-                             class="card-img-top" alt="Nice, France" style="height: 300px; object-fit: cover;">
+                        <div style="height: 300px; background: linear-gradient(135deg, #FFB366 0%, #FF8C42 100%); 
+                                    display: flex; align-items: center; justify-content: center; 
+                                    border-radius: 8px 8px 0 0; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                                        background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, transparent 2px, transparent 12px, rgba(0,0,0,0.1) 14px);"></div>
+                            <div style="text-align: center; color: #333; z-index: 1;">
+                                <i class="fas fa-map fa-3x mb-3" style="color: rgba(0,0,0,0.7);"></i>
+                                <h5 style="margin: 0; font-weight: bold;">Mediterranean Coastline</h5>
+                                <small>Detailed contour mapping</small>
+                            </div>
+                        </div>
                         <div class="card-body">
-                            <h6 class="card-title">Nice, France - Mediterranean Coast</h6>
-                            <small class="text-muted">Coastal contours with road networks • 10m intervals • Light orange background</small>
+                            <h6 class="card-title">Mediterranean Coastline</h6>
+                            <small class="text-muted">Detailed coastal contours with road networks • Various intervals</small>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
-                        <img src="https://via.placeholder.com/400x300/F7E7B4/000000?text=Rolling+Hills" 
-                             class="card-img-top" alt="English Countryside" style="height: 300px; object-fit: cover;">
+                        <div style="height: 300px; background: linear-gradient(135deg, #F7E7B4 0%, #E6D195 100%); 
+                                    display: flex; align-items: center; justify-content: center; 
+                                    border-radius: 8px 8px 0 0; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                                        background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0px, transparent 3px, transparent 18px, rgba(0,0,0,0.05) 21px);"></div>
+                            <div style="text-align: center; color: #333; z-index: 1;">
+                                <i class="fas fa-mountain fa-3x mb-3" style="color: rgba(0,0,0,0.7);"></i>
+                                <h5 style="margin: 0; font-weight: bold;">Rolling Hills & Valleys</h5>
+                                <small>Complex terrain patterns</small>
+                            </div>
+                        </div>
                         <div class="card-body">
                             <h6 class="card-title">English Countryside - Rolling Hills</h6>
                             <small class="text-muted">Complex terrain patterns • 6m contour intervals • Pastel yellow background</small>
@@ -85,7 +103,6 @@
                     </div>
                 </div>
             </div>
-            <p class="text-muted">Upload your own example maps to <code>/static/examples/</code> folder</p>
         </div>
 
         <!-- Pricing Preview -->
@@ -177,7 +194,7 @@
             <div class="card bg-primary text-white">
                 <div class="card-body py-5">
                     <h2 class="card-title">Ready to Create Beautiful Maps?</h2>
-                    <p class="card-text fs-5 mb-4">Start with 3 free credits - no payment required</p>
+                    <p class="card-text fs-5 mb-4">Start with 1 free credit - no payment required</p>
                     <a href="{{ url_for('register') }}" class="btn btn-light btn-lg px-5">
                         <i class="fas fa-rocket"></i> Get Started Free
                     </a>
