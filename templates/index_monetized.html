@@ -237,9 +237,13 @@
         // Add draw control for rectangle (desktop only for now - mobile uses button)
         map.on('mousedown', startDrawing);
         
-        // For mobile, we'll use both click and touch events
+        // For mobile, we'll use a direct DOM event approach
+        // Get the map container and add touch listeners directly
+        const mapContainer = map.getContainer();
+        mapContainer.addEventListener('touchend', handleDirectTouch, {passive: false});
+        
+        // Keep the click handler for desktop compatibility
         map.on('click', handleMapClick);
-        map.on('touchend', handleMapTouch);
         
         // Prevent double-tap zoom on mobile when in draw mode
         map.on('dblclick', function(e) {
@@ -273,6 +277,10 @@
             // Disable map dragging to prevent conflicts
             map.dragging.disable();
             
+            // Add visual indicator that draw mode is active
+            map.getContainer().style.cursor = 'crosshair';
+            map.getContainer().style.border = '3px solid red';
+            
         } else {
             btn.innerHTML = '<i class="fas fa-draw-polygon"></i> Draw Mode';
             btn.className = 'btn btn-outline-success d-md-none';
@@ -280,6 +288,10 @@
             
             // Re-enable map dragging
             map.dragging.enable();
+            
+            // Remove visual indicators
+            map.getContainer().style.cursor = '';
+            map.getContainer().style.border = '';
             
             // Clean up any temporary markers
             if (window.tempMarker1) {
@@ -356,31 +368,89 @@
         return false;
     }
     
-    // Handle touch events specifically for mobile
-    function handleMapTouch(e) {
-        console.log('Touch event, draw mode:', isMobileDrawMode); // Debug log
+    // Direct touch handler that bypasses Leaflet's event system
+    function handleDirectTouch(e) {
+        console.log('Direct touch event, draw mode:', isMobileDrawMode); // Debug log
         
         if (!isMobileDrawMode) return;
         
-        // Convert touch to click-like event
-        if (e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches.length > 0) {
-            const touch = e.originalEvent.changedTouches[0];
-            const latlng = map.containerPointToLatLng([
-                touch.clientX - map.getContainer().getBoundingClientRect().left,
-                touch.clientY - map.getContainer().getBoundingClientRect().top
-            ]);
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (e.changedTouches && e.changedTouches.length > 0) {
+            const touch = e.changedTouches[0];
+            const rect = map.getContainer().getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
             
-            // Create a fake event object
-            const fakeEvent = {
-                latlng: latlng,
-                originalEvent: e.originalEvent
-            };
+            // Convert pixel coordinates to lat/lng
+            const latlng = map.containerPointToLatLng([x, y]);
             
-            // Process the touch as a click
-            handleMapClick(fakeEvent);
+            console.log('Touch coordinates:', x, y, 'LatLng:', latlng); // Debug log
+            
+            processMobileSelection(latlng);
         }
         
         return false;
+    }
+    
+    // Simplified mobile selection logic
+    function processMobileSelection(latlng) {
+        console.log('Processing mobile selection, corner1:', mobileCorner1); // Debug log
+        
+        if (!mobileCorner1) {
+            // First touch - set first corner
+            mobileCorner1 = latlng;
+            
+            console.log('Setting first corner:', mobileCorner1); // Debug log
+            
+            // Add a temporary marker
+            if (window.tempMarker1) map.removeLayer(window.tempMarker1);
+            window.tempMarker1 = L.marker(mobileCorner1, {
+                icon: L.divIcon({
+                    className: 'custom-marker',
+                    html: '<div style="background: red; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white;"></div>',
+                    iconSize: [12, 12],
+                    iconAnchor: [6, 6]
+                })
+            }).addTo(map);
+            
+            // Update button text
+            const btn = document.getElementById('drawModeBtn');
+            btn.innerHTML = '<i class="fas fa-map-marker"></i> Tap 2nd Corner';
+            
+        } else {
+            // Second touch - create rectangle
+            console.log('Setting second corner:', latlng); // Debug log
+            
+            const corner2 = latlng;
+            
+            // Remove temporary marker
+            if (window.tempMarker1) map.removeLayer(window.tempMarker1);
+            
+            // Create rectangle
+            if (currentRectangle) map.removeLayer(currentRectangle);
+            const bounds = L.latLngBounds(mobileCorner1, corner2);
+            currentRectangle = L.rectangle(bounds, {
+                color: '#007bff',
+                weight: 2,
+                fillOpacity: 0.2
+            }).addTo(map);
+            
+            // Update bbox input
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+            const bbox = `${sw.lng.toFixed(4)},${sw.lat.toFixed(4)},${ne.lng.toFixed(4)},${ne.lat.toFixed(4)}`;
+            document.getElementById('bbox').value = bbox;
+            
+            console.log('Created bbox:', bbox); // Debug log
+            
+            // Update resolution calculation
+            updateResolutionCalculation(sw.lng, sw.lat, ne.lng, ne.lat);
+            
+            // Exit draw mode
+            toggleDrawMode();
+        }
     }
     
     function startDrawing(e) {
