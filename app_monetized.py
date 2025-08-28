@@ -532,5 +532,17 @@ def download(filename):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        
+        # Migration: Ensure existing users aren't affected by credit default change
+        try:
+            existing_users = User.query.filter(User.credits.is_(None)).all()
+            for user in existing_users:
+                user.credits = 1
+            if existing_users:
+                db.session.commit()
+                print(f"Updated {len(existing_users)} users with null credits")
+        except Exception as e:
+            print(f"Migration warning: {e}")
+            
     port = int(os.environ.get('PORT', 8081))
     app.run(host='0.0.0.0', port=port, debug=os.environ.get('DEBUG', 'False').lower() == 'true')
