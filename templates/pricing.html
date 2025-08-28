@@ -23,8 +23,14 @@
                         {% endif %}
                         <div class="card-body text-center d-flex flex-column">
                             <h3 class="card-title text-primary">{{ credits }} Credits</h3>
-                            <h2 class="text-dark mb-3">${{ "%.2f"|format(info.price / 100) }}</h2>
-                            <p class="text-muted mb-3">${{ "%.2f"|format((info.price / 100) / credits) }} per map</p>
+                            <h2 class="text-dark mb-3">
+                                ${{ "%.2f"|format(info.price / 100) }} 
+                                <small class="text-muted">(£{{ "%.2f"|format((info.price / 100) * 0.8) }})</small>
+                            </h2>
+                            <p class="text-muted mb-3">
+                                ${{ "%.2f"|format((info.price / 100) / credits) }} per map
+                                <small>(£{{ "%.2f"|format(((info.price / 100) / credits) * 0.8) }})</small>
+                            </p>
                             
                             <ul class="list-unstyled mb-4 flex-grow-1">
                                 <li><i class="fas fa-check text-success"></i> {{ credits }} map generations</li>

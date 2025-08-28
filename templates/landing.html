@@ -66,21 +66,23 @@
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
-                        <img src="/static/examples/coastal_map.jpg" 
-                             class="card-img-top" alt="Coastal Region" style="height: 300px; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='nice_10m_contour_map_light_orange_roads.png') }}" 
+                             class="card-img-top" alt="Nice, France" style="height: 300px; object-fit: cover;" 
+                             onerror="this.src='https://via.placeholder.com/400x300/FFB366/000000?text=Mediterranean+Coastline'">
                         <div class="card-body">
-                            <h6 class="card-title">Mediterranean Coastline</h6>
-                            <small class="text-muted">Detailed coastal contours with road networks • 6m intervals</small>
+                            <h6 class="card-title">Nice, France - Mediterranean Coast</h6>
+                            <small class="text-muted">Coastal contours with road networks • 10m intervals • Light orange background</small>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
-                        <img src="/static/examples/terrain_map.jpg" 
-                             class="card-img-top" alt="Terrain Region" style="height: 300px; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='worcestershire_6m_pastel_yellow_roads_hi.png') }}" 
+                             class="card-img-top" alt="English Countryside" style="height: 300px; object-fit: cover;"
+                             onerror="this.src='https://via.placeholder.com/400x300/F7E7B4/000000?text=Rolling+Hills'">
                         <div class="card-body">
-                            <h6 class="card-title">Rolling Hills & Valleys</h6>
-                            <small class="text-muted">Complex terrain patterns • 10m contour intervals</small>
+                            <h6 class="card-title">English Countryside - Rolling Hills</h6>
+                            <small class="text-muted">Complex terrain patterns • 6m contour intervals • Pastel yellow background</small>
                         </div>
                     </div>
                 </div>
@@ -96,29 +98,29 @@
                     <div class="col-md-3 mb-3">
                         <div class="border rounded p-3 h-100">
                             <h5 class="text-success">Free Trial</h5>
-                            <h2 class="text-primary">3</h2>
-                            <p class="text-muted">free credits to start</p>
+                            <h2 class="text-primary">1</h2>
+                            <p class="text-muted">free credit to start</p>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="border rounded p-3 h-100">
                             <h5>Starter Pack</h5>
                             <h2 class="text-primary">5 credits</h2>
-                            <p class="text-muted">$10.00</p>
+                            <p class="text-muted">$10.00 <small>(£8.00)</small></p>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="border rounded p-3 h-100 border-primary">
                             <h5 class="text-primary">Popular</h5>
                             <h2 class="text-primary">15 credits</h2>
-                            <p class="text-muted">$30.00</p>
+                            <p class="text-muted">$30.00 <small>(£24.00)</small></p>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="border rounded p-3 h-100">
                             <h5>Pro Pack</h5>
                             <h2 class="text-primary">50 credits</h2>
-                            <p class="text-muted">$100.00</p>
+                            <p class="text-muted">$100.00 <small>(£80.00)</small></p>
                         </div>
                     </div>
                 </div>
