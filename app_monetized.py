@@ -66,10 +66,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Pricing configuration
 CREDIT_PRICES = {
+    1: {'price': 200, 'description': '1 credit'},        # $2.00
     5: {'price': 1000, 'description': '5 credits'},      # $10.00
     15: {'price': 3000, 'description': '15 credits'},    # $30.00
     50: {'price': 10000, 'description': '50 credits'},   # $100.00
-    100: {'price': 20000, 'description': '100 credits'}, # $200.00
 }
 
 # Database Models

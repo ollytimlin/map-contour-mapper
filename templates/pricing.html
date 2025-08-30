@@ -15,8 +15,12 @@
         <div class="row">
             {% for credits, info in credit_prices.items() %}
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="card h-100 {% if credits == 15 %}border-primary{% endif %}">
-                        {% if credits == 15 %}
+                    <div class="card h-100 {% if credits == 1 %}border-success{% elif credits == 5 %}border-primary{% endif %}">
+                        {% if credits == 1 %}
+                            <div class="card-header bg-success text-white text-center">
+                                <i class="fas fa-gift"></i> Try It!
+                            </div>
+                        {% elif credits == 5 %}
                             <div class="card-header bg-primary text-white text-center">
                                 <i class="fas fa-star"></i> Most Popular
                             </div>
@@ -33,12 +37,22 @@
                             </p>
                             
                             <ul class="list-unstyled mb-4 flex-grow-1">
-                                <li><i class="fas fa-check text-success"></i> {{ credits }} map generations</li>
-                                <li><i class="fas fa-check text-success"></i> All features included</li>
-                                <li><i class="fas fa-check text-success"></i> Up to 4K resolution</li>
-                                <li><i class="fas fa-check text-success"></i> Credits never expire</li>
-                                {% if credits >= 50 %}
-                                    <li><i class="fas fa-check text-success"></i> <strong>Best value!</strong></li>
+                                {% if credits == 1 %}
+                                    <li><i class="fas fa-check text-success"></i> {{ credits }} map generation</li>
+                                    <li><i class="fas fa-check text-success"></i> Perfect for testing</li>
+                                    <li><i class="fas fa-check text-success"></i> All features included</li>
+                                    <li><i class="fas fa-check text-success"></i> Up to 4K resolution</li>
+                                    <li><i class="fas fa-rocket text-warning"></i> <strong>Try before buying more!</strong></li>
+                                {% else %}
+                                    <li><i class="fas fa-check text-success"></i> {{ credits }} map generations</li>
+                                    <li><i class="fas fa-check text-success"></i> All features included</li>
+                                    <li><i class="fas fa-check text-success"></i> Up to 4K resolution</li>
+                                    <li><i class="fas fa-check text-success"></i> Credits never expire</li>
+                                    {% if credits >= 50 %}
+                                        <li><i class="fas fa-check text-success"></i> <strong>Best value!</strong></li>
+                                    {% elif credits == 5 %}
+                                        <li><i class="fas fa-star text-primary"></i> <strong>Great for regular use!</strong></li>
+                                    {% endif %}
                                 {% endif %}
                             </ul>
                             
@@ -169,7 +183,7 @@
                 <div class="card bg-light">
                     <div class="card-body py-5">
                         <h3>Ready to get started?</h3>
-                        <p class="lead">Sign up now and get 3 free credits to try our service</p>
+                        <p class="lead">Sign up now and get 1 free credit to try our service</p>
                         <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-5">
                             <i class="fas fa-rocket"></i> Start Free Trial
                         </a>
